@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">表单</div>
+            <div class="panel-body">
+
+                <form id="formAdd">
+
+                    <div class="clearfix">
+                        {% for field in form %}
+                            <div class="col-xs-6">
+                                <div class="form-group" style="position: relative;margin-bottom: 20px;">
+                                    <label>{{ field.label }}</label>
+                                    {{ field }}
+                                    <span class="error-msg" style="color: red;position: absolute;"></span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="col-xs-12">
+                            <button id="btnAdd" type="button" class="btn btn-primary">提 交</button>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成之后代码自动执行
+            bindBtnAddEvent();
+
+        })
+
+        function bindBtnAddEvent() {
+            $("#btnAdd").click(function () {
+                $(".error-msg").empty();
+                $.ajax({
+                    url: '/task/add/',
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            alert("添加成功");
+                        } else {
+                            $.each(res.error, function (name, data) {
+                                // console.log(name,data);
+                                $("#id_" + name).next().text(data[0]);
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+    </script>
+{% endblock %}
